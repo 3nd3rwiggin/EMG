@@ -80,7 +80,7 @@ The simulator produces:
   <li>Plots of the <strong>force profile</strong>, <strong>firing rates</strong>, <strong>spike trains</strong>, <strong>MUAPs</strong>, and the generated <strong>EMG signal</strong>.</li>
 </ul>
 
-![Alt text](https://i.ibb.co/H7HhnNY/download.png)
+![Alt text](https://i.ibb.co/PCS8Jt8/IMG-4345.png)
 
 ### Customization
 
