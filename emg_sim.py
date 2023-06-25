@@ -14,7 +14,7 @@ class EMGSimulator:
         self.force_profile = self.force_slope * self.time
         self.force_value = self.force_slope * self.duration
         self.force_thresholds = {1: [0,20], 2: [20,40], 3: [40,60]}
-        self.max_firing_rates = {1: 3, 2: 6, 3: 9}
+        self.max_firing_rates = {1: 3, 2: 3, 3: 3}
         self.muap_params = {
     1: [0.2, 0.2, 0.1, 0.15, 0.02],
     2: [0.6, 0.6, 0.08, 0.12, 0.03],
@@ -129,17 +129,45 @@ class EMGSimulator:
       plt.show()
 
     def run_simulation(self):
+        # Calculate firing rates for motor units
         firing_rates = self.calculate_firing_rates()
-        spike_trains = self.generate_spike_trains(firing_rates)
-        emg, muaps = self.generate_emg(spike_trains)
-        self.export_to_mat(emg)
-        self.plot_all(firing_rates, spike_trains, emg, muaps)
         
+        # Generate spike trains based on firing rates
+        spike_trains = self.generate_spike_trains(firing_rates)
+        
+        # Generate electromyography (EMG) and motor unit action potentials (MUAPs) using spike trains
+        emg, muaps = self.generate_emg(spike_trains)
+        
+        
+        # Export EMG data to a MATLAB file
+        #self.export_to_mat(emg)
+        
+        # Plot firing rates, spike trains, EMG, and MUAPs
+        self.plot_all(firing_rates, spike_trains, emg, muaps)
 
-    
-      
-      
+        # Plot the activation profile of each motor unit
+        self.muaps_activation_profile(self.muap_params[1], 300)  # Plotting the first motor unit
+        self.muaps_activation_profile(self.muap_params[2], 1500)  # Plotting the second motor unit
+        self.muaps_activation_profile(self.muap_params[3], 3000)  # Plotting the third motor unit
 
+    # Shift an array (representing a motor unit) to the right by a specified amount
+    def shift_motor_unit_right(self, arr, shift):
+        shifted_arr = np.concatenate((np.zeros(shift), arr[:-shift]))
+        return shifted_arr
+
+    # Plot the activation profile of a motor unit by generating biphasic motor unit action potentials (MUAPs)
+    def muaps_activation_profile(self, params, shift):
+        # Generate biphasic MUAPs for a given time range and parameters, at a specified force level
+        muaps = self.generate_biphasic_muap(self.time, params, force_level=1)
+        
+        # Shift the motor unit to the right for visualization purposes
+        muaps = self.shift_motor_unit_right(muaps, shift)
+        
+        # Plot the MUAPs
+        plt.plot(self.time, muaps)
+        plt.xlim([0, 3])  # Limit the x-axis range for visualization purposes
+        plt.title("Biphasic MUAPs Profile")
+        
 if __name__ == "__main__":
     simulator = EMGSimulator(force=55)
     simulator.run_simulation()
